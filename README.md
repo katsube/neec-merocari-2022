@@ -3,20 +3,28 @@
 
 ## 初期設定
 ### 0. 環境準備
-PHPとMySQLが動作する環境を用意します。
+実習で利用しているCentOSを使う場合は次の項目へ進んでください。
+
+独自の環境で利用する場合、PHPとMySQLが動作する環境を用意します。
+
 * PHP 7.4〜
 * MySQL 5.7〜
 
-DBにアカウントが存在しない場合は作成します。
-
+DBにアカウントが存在しない場合は作成してください。
+```sql
+$ mysql -u root -p
+mysql> CREATE USER ユーザー名@localhost IDENTIFIED BY 'パスワード';
+mysql> GRANT ALL on *.* to ユーザー名@localhost; -- 権限は必要に応じて指定（ここでは全権限）
+```
 
 ### 1. ソースコードの取得
+GitHubからclone、またはダウンロードします。
 ```shellsession
 $ git clone https://github.com/katsube/neec-merocari-2022.git
 ```
 
 ### 2. DBの準備
-データベースとテーブルを作成します。必要なSQLは`sql/initialize`に保存されているので、以下のコマンドで一気に実行することが可能です。
+データベースとテーブルを作成します。必要なSQLは`sql/initialize`に保存されているので、以下のコマンドで一気に作成することが可能です。
 ```shellsession
 $ cd (プロジェクトの一番上の階層)
 $ cat sql/initialize/*.sql | mysql -u (ユーザー名) -p
