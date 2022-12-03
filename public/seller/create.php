@@ -39,6 +39,8 @@ try{
 	header('Location: done.php');
 }
 catch(PDOException $e){
+	$product->rollback();
+
 	echo '<pre>';
 	var_dump($_POST);
 	echo $e->getMessage();
