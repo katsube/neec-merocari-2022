@@ -36,4 +36,28 @@ class ProductModel extends BaseModel{
 		$ret = $this->execute($sql, $data);		// 成功したらtrue, 失敗したらfalseが返る
 		return($ret);
 	}
+
+	/**
+	 * カテゴリーで商品を検索する
+	 *
+	 * @param string $category
+	 * @return array
+	 */
+	function findCategory($category){
+		$sql = 'SELECT id, name, price, image_url FROM Product WHERE category_cd = ?';
+		$this->execute($sql, [$category]);
+		return( $this->fetchAll() );
+	}
+
+	/**
+	 * 商品をIDで検索する
+	 *
+	 * @param integer $id
+	 * @return array
+	 */
+	function find($id){
+		$sql = 'SELECT A.id, A.name, A.price, A.image_url, A.description, A.category_cd, B.name as "category_name", A.created_at FROM Product A, Category B WHERE id = ? AND A.category_cd = B.cd';
+		$this->execute($sql, [$id]);
+		return( $this->fetch() );
+	}
 }

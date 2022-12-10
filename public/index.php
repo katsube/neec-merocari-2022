@@ -9,11 +9,25 @@
 	<?php
 		// header.phpを埋め込む
 		require('./common/header_buyer.php');
-	?>
 
-	<!-- ToDo:カテゴリ一覧 -->
+		// カテゴリ一覧を表示
+		require_once('../model/category.php');
+		$category = new CategoryModel();
+		$categories = $category->getAll();
 
-	<?php
+		echo '<main>';
+		echo '<section class="py-5 container">';
+		echo '<ul class="list-group">';
+		for($i=0; $i<count($categories); $i++){
+			printf('<li class="list-group-item list-group-item-action"><a href="/buyer/category.php?category_cd=%s">%s</a></li>'
+								, $categories[$i]['cd']
+								, $categories[$i]['name']
+						);
+		}
+		echo '</ul>';
+		echo '</section>';
+		echo '</main>';
+
 		// footer.phpを埋め込む
 		require('./common/footer.php');
 	?>
