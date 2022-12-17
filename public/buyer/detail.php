@@ -122,7 +122,7 @@ window.addEventListener('load', async ()=>{
 	setValue('image',       data['image_url']);
 	setValue('price',       data['price']);
 	setValue('description', data['description']);
-	setValue('category',    data['category_name']);
+	setValue('category',    [data['category_cd'], data['category_name']]);
 	setValue('created',     data['created_at']);
 
 	// ローディングを非表示
@@ -151,6 +151,9 @@ function setValue(name, value){
 			break;
 		case 'image':
 			element.setAttribute('src', value);
+			break;
+		case 'category':
+			element.innerHTML = `<a href="/buyer/category.php?category_cd=${value[0]}">${value[1]}</a>`;
 			break;
 		default:
 			element.textContent = value;
