@@ -50,6 +50,19 @@ class ProductModel extends BaseModel{
 	}
 
 	/**
+	 * キーワードで商品を検索する
+	 *
+	 * @param string $keyword
+	 * @return array
+	 */
+	function findKeyword($keyword){
+		$sql = 'SELECT id, name, price, image_url FROM Product WHERE name LIKE ?';
+		$q = sprintf('%%%s%%', $keyword); 	// name like "%キーワード%"
+		$this->execute($sql, [$q]);
+		return( $this->fetchAll() );
+	}
+
+	/**
 	 * 商品をIDで検索する
 	 *
 	 * @param integer $id
