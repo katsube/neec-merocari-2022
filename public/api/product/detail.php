@@ -17,7 +17,7 @@
  *       "price":123,
  *       "image_url":"http://〜",
  *       "description":"xxx",
- *       "category_cd":"xxx",
+ *       "category":[{"cd":"WOM", "name":"レディース"},{...}],
  *       "created_at":1234567890
  *     }
  *   }

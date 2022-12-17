@@ -122,7 +122,7 @@ window.addEventListener('load', async ()=>{
 	setValue('image',       data['image_url']);
 	setValue('price',       data['price']);
 	setValue('description', data['description']);
-	setValue('category',    [data['category_cd'], data['category_name']]);
+	setValue('category',    data['category']);
 	setValue('created',     data['created_at']);
 
 	// ローディングを非表示
@@ -153,12 +153,27 @@ function setValue(name, value){
 			element.setAttribute('src', value);
 			break;
 		case 'category':
-			element.innerHTML = `<a href="/buyer/category.php?category_cd=${value[0]}">${value[1]}</a>`;
+			element.innerHTML = createCategoryList(value);
 			break;
 		default:
 			element.textContent = value;
 			break;
 	}
+}
+
+/**
+ * カテゴリ一覧を作成
+ *
+ * @param array categories
+ * @return string
+ */
+function createCategoryList(categories){
+	let list = [ ];
+	for( let i = 0; i < categories.length; i++ ){
+		const c = categories[i];
+		list.push(`<a href="/buyer/category.php?category_cd=${c['cd']}">${c['name']}</a>`);
+	}
+	return(list.join(' / '));
 }
 </script>
 </body>

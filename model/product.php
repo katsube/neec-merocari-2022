@@ -27,14 +27,34 @@ class ProductModel extends BaseModel{
 	/**
 	 * 商品を新規登録する
 	 *
-	 * @param array $data 商品情報 [name, price, category, image_url, description]
+	 * @param array $data 商品情報 [name, price, image_url, description]
+	 * @param array $category カテゴリー [category_cd, category_cd, ...]
 	 * @return boolean
 	 */
-	function create($data){
-		$sql = 'INSERT INTO Product (name,price,category_cd,image_url,description,created_at) '
-					.'VALUES (?,?,?,?,?,now())';
-		$ret = $this->execute($sql, $data);		// 成功したらtrue, 失敗したらfalseが返る
-		return($ret);
+	function create($data, $category){
+		//-----------------------
+		// 商品を追加
+		//-----------------------
+		$sql1 = 'INSERT INTO Product (name, price, image_url, description, created_at) '
+					.'VALUES (?,?,?,?,now())';
+		$ret1 = $this->execute($sql1, $data);		// 成功したらtrue, 失敗したらfalseが返る
+		if( !$ret1 ){
+			throw new PDOException('商品の登録に失敗しました');
+		}
+		$id = $this->lastInsertId();
+
+		//-----------------------
+		// 商品のカテゴリーを追加
+		//-----------------------
+		$sql2 = 'INSERT INTO ProductCategory (product_id, category_cd) VALUES (?,?)';
+		for($i=0; $i<count($category); $i++){
+			$ret2 = $this->execute($sql2, [$id, $category[$i]]);
+			if( !$ret2 ){
+				throw new PDOException('カテゴリーの登録に失敗しました');
+			}
+		}
+
+		return(true);
 	}
 
 	/**
@@ -44,7 +64,13 @@ class ProductModel extends BaseModel{
 	 * @return array
 	 */
 	function findCategory($category){
-		$sql = 'SELECT id, name, price, image_url FROM Product WHERE category_cd = ?';
+		$sql = <<<SQL
+			SELECT A.id, A.name, A.price, A.image_url
+			FROM Product A JOIN ProductCategory B
+							ON A.id = B.product_id
+			WHERE B.category_cd = ?
+		SQL;
+
 		$this->execute($sql, [$category]);
 		return( $this->fetchAll() );
 	}
@@ -69,8 +95,34 @@ class ProductModel extends BaseModel{
 	 * @return array
 	 */
 	function find($id){
-		$sql = 'SELECT A.id, A.name, A.price, A.image_url, A.description, A.category_cd, B.name as "category_name", A.created_at FROM Product A, Category B WHERE id = ? AND A.category_cd = B.cd';
+		// 商品情報を検索
+		$sql = 'SELECT id, name, price, image_url, description, created_at FROM Product WHERE id = ?';
 		$this->execute($sql, [$id]);
-		return( $this->fetch() );
+		$product = $this->fetch();
+
+		// カテゴリーを検索
+		$product['category'] = $this->category($id);
+
+		return($product);
+	}
+
+	/**
+	 * 商品IDのカテゴリーを取得する
+	 *
+	 * @param int $id
+	 * @return array
+	 */
+	function category($id){
+		$sql = <<<SQL
+			SELECT	A.category_cd as "cd",
+							B.name as "name"
+			FROM 	ProductCategory A JOIN Category B
+							ON A.category_cd = B.cd
+			WHERE A.product_id = ?
+			ORDER BY B.sortnum
+		SQL;
+
+		$this->execute($sql, [$id]);
+		return( $this->fetchAll() );
 	}
 }

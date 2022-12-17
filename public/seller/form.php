@@ -54,10 +54,27 @@ catch(PDOException $e){
 				<div class="mb-4">
 					<label class="form-label fw-bold" for="category">カテゴリ</label>
 					<span class="badge bg-danger">必須</span>
-					<select name="category" class="form-select w-50">
-						<option value="">▼選択してください▼</option>
-						<?= $category_options ?>
-					</select>
+					<span class="text-muted">1つだけでもOK</span>
+					<div class="row">
+						<div class="col-4">
+							<select name="category1" class="form-select">
+								<option value="">▼選択してください▼</option>
+								<?= $category_options ?>
+							</select>
+						</div>
+						<div class="col-4">
+							<select name="category2" class="form-select">
+								<option value="">▼選択してください▼</option>
+								<?= $category_options ?>
+							</select>
+						</div>
+						<div class="col-4">
+							<select name="category3" class="form-select" >
+								<option value="">▼選択してください▼</option>
+								<?= $category_options ?>
+							</select>
+						</div>
+					</div>
 				</div>
 				<div class="mb-4">
 					<label class="form-label fw-bold" for="image_url">画像URL</label>
