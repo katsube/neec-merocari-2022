@@ -28,4 +28,16 @@ class CategoryModel extends BaseModel{
 		$this->execute($sql);
 		return( $this->fetchAll() );
 	}
+
+	/**
+	 * カテゴリ名を返却する
+	 *
+	 * @param string $cd
+	 * @return void
+	 */
+	function find($cd){
+		$sql = 'SELECT cd, name FROM Category WHERE cd = ?';
+		$this->execute($sql, [$cd]);
+		return( $this->fetch() );
+	}
 }

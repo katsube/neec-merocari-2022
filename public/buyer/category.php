@@ -28,6 +28,8 @@
 	?>
 
 	<main class="py-5 container">
+		<h1 id="title" class="mb-3"></h1>
+
 		<!-- ローディング -->
 		<div id="loading" class="fa-3x">
 			<i class="fas fa-circle-notch fa-spin"></i> Now Loading
@@ -35,8 +37,10 @@
 
 		<!-- 商品が存在しない -->
 		<div id="notfound">
-			<h3>商品が見つかりませんでした</h3>
-			<p>このカテゴリに登録されている商品が存在しません。</p>
+			<div class="alert alert-warning">
+				<h3>商品が見つかりませんでした</h3>
+				<p>このカテゴリに登録されている商品が存在しません。</p>
+			</div>
 		</div>
 
 		<!-- 商品一覧 -->
@@ -69,17 +73,35 @@ window.addEventListener('load', async ()=>{
 	}
 
 	//--------------------------------
-	// APIからカテゴリ一覧を取得
+	// APIからカテゴリ名を取得
 	//--------------------------------
-	const buff = await fetch('/api/product/search.php?category_cd=' + category)
-	const json = await buff.json();
+	const buff1 = await fetch('/api/category/name.php?category_cd=' + category);
+	const json1 = await buff1.json();
 
 	// エラーチェック
-	if( json['status'] === false ){
+	if( json1['status'] === false ){
+		alert('データを正常に取得できませんでした');
+	}
+	if( json1['data'] === false ){
+		alert('カテゴリーが存在しません');
+		location.href = '/';
+	}
+
+	// カテゴリ名を表示
+	document.querySelector('#title').textContent = json1['data']['name'];
+
+	//--------------------------------
+	// APIからカテゴリ一覧を取得
+	//--------------------------------
+	const buff2 = await fetch('/api/product/search.php?category_cd=' + category)
+	const json2 = await buff2.json();
+
+	// エラーチェック
+	if( json2['status'] === false ){
 		alert('データを正常に取得できませんでした');
 	}
 	// 商品が存在しない場合
-	if( json['data'].length === 0 ){
+	if( json2['data'].length === 0 ){
 		document.querySelector('#loading').style.display = 'none';
 		document.querySelector('#notfound').style.display = 'block';
 		return;
@@ -89,8 +111,8 @@ window.addEventListener('load', async ()=>{
 	// 商品一覧を表示
 	//--------------------------------
 	const cards = document.querySelector('#cards');
-	for(let i=0; i<json['data'].length; i++){
-		const card = createCardItem(json['data'][i]);
+	for(let i=0; i<json2['data'].length; i++){
+		const card = createCardItem(json2['data'][i]);
 		cards.appendChild(card);
 	};
 
