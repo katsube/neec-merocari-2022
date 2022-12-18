@@ -58,4 +58,10 @@ class BaseModel{
 	function rollback(){
 		$this->dbh->rollback();
 	}
+
+	function lastInsertId(){
+		return(
+			$this->dbh->lastInsertId()
+		);
+	}
 }
